@@ -14,6 +14,8 @@ app = FastAPI()
 df = None
 model = None
 
+
+
 def load_data_and_model():
     global df, model
     if df is None:
@@ -24,6 +26,7 @@ def load_data_and_model():
     if model is None:
         print("🤖 Loading SentenceTransformer model...")
         model = SentenceTransformer("all-MiniLM-L6-v2")
+load_data_and_model()
 
 def safe_split(col):
     return [part.strip().lower() for part in str(col).replace("+", ",").replace("/", ",").split(",")]
@@ -85,7 +88,6 @@ class Startup(BaseModel):
 @app.post("/rank-vcs")
 def rank_vcs(startup: Startup):
     print("📥 Received a request to /rank-vcs")
-    load_data_and_model()
     user = startup.dict()
 
     user_vector = model.encode(user["pitch"], convert_to_tensor=True)
@@ -99,6 +101,8 @@ def rank_vcs(startup: Startup):
                 [(row, user) for row in df.to_dict("records")]
             )
         )
+
+    
 
     final_scores = 0.6 * np.array(structured_scores) + 0.4 * np.array(nlp_sims)
     min_score, max_score = final_scores.min(), final_scores.max()
@@ -119,6 +123,6 @@ def rank_vcs(startup: Startup):
 
 
 
-@app.get()
+@app.get("/healthcheck")
 def healthcheck() -> str:
     return "ok"
