@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+pydantic
+pandas
+numpy
+sentence-transformers
+concurrent-log-handler
