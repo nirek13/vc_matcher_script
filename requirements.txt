@@ -4,4 +4,4 @@ pydantic
 pandas
 numpy
 sentence-transformers
-concurrent-log-handler
+gunicorn

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 import pandas as pd
@@ -11,10 +12,22 @@ from concurrent.futures import ProcessPoolExecutor
 
 app = FastAPI()
 
+# CORS fix
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",  # for local dev
+        "https://gen-ai-genissis.vercel.app/",  # your actual Vercel frontend
+        "https://summaforfounders.com/"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 df = None
 model = None
-
-
 
 def load_data_and_model():
     global df, model
@@ -26,6 +39,8 @@ def load_data_and_model():
     if model is None:
         print("🤖 Loading SentenceTransformer model...")
         model = SentenceTransformer("all-MiniLM-L6-v2")
+    print("Done loading models...")
+
 load_data_and_model()
 
 def safe_split(col):
@@ -102,8 +117,6 @@ def rank_vcs(startup: Startup):
             )
         )
 
-    
-
     final_scores = 0.6 * np.array(structured_scores) + 0.4 * np.array(nlp_sims)
     min_score, max_score = final_scores.min(), final_scores.max()
     compat_scores = (final_scores - min_score) / (max_score - min_score)
@@ -114,14 +127,12 @@ def rank_vcs(startup: Startup):
     result_df["final_score"] = final_scores
     result_df["compatibility_score"] = compat_scores
 
-    top_matches = result_df.sort_values("compatibility_score", ascending=False).head(20)
+    top_matches = result_df.sort_values("compatibility_score", ascending=False).head(250)
 
     return top_matches[[
         "Investor Name", "Investment Thesis", "Check Size", "Geography", "Stages", "Fake Email",
         "structured_score", "nlp_similarity", "final_score", "compatibility_score"
     ]].to_dict(orient="records")
-
-
 
 @app.get("/healthcheck")
 def healthcheck() -> str:
