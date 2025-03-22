@@ -42,6 +42,7 @@ def load_data_and_model():
     print("Done loading models...")
 
 load_data_and_model()
+thesis_vectors = model.encode(df["Investment Thesis"].tolist(), convert_to_tensor=True, batch_size=64)
 
 def safe_split(col):
     return [part.strip().lower() for part in str(col).replace("+", ",").replace("/", ",").split(",")]
@@ -106,7 +107,6 @@ def rank_vcs(startup: Startup):
     user = startup.dict()
 
     user_vector = model.encode(user["pitch"], convert_to_tensor=True)
-    thesis_vectors = model.encode(df["Investment Thesis"].tolist(), convert_to_tensor=True, batch_size=64)
     nlp_sims = [util.cos_sim(user_vector, vc_vector).item() for vc_vector in thesis_vectors]
 
     with ProcessPoolExecutor(max_workers=os.cpu_count()) as executor:
