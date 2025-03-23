@@ -122,7 +122,7 @@ def rank_vcs(startup: Startup):
     result_df["final_score"] = final_scores
     result_df["compatibility_score"] = compat_scores
 
-    top_matches = result_df.sort_values("compatibility_score", ascending=False).head(20)
+    top_matches = result_df.sort_values("compatibility_score", ascending=False).head(100)
 
     return top_matches[[
         "Investor Name", "Investment Thesis", "Check Size", "Geography", "Stages", "Fake Email",
