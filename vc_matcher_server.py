@@ -12,7 +12,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 app = FastAPI()
 
-# CORS fix
+# CORS allows all
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
