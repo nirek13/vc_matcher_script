@@ -17,8 +17,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:3000",  # for local dev
-        "https://gen-ai-genissis.vercel.app/",  # your actual Vercel frontend
-        "https://summa-ai.ca/"
+        "https://gen-ai-genissis.vercel.app",  # your actual Vercel frontend
+        "https://summa-ai.ca"
     ],
     allow_credentials=True,
     allow_methods=["*"],
