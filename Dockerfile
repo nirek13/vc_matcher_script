@@ -14,4 +14,4 @@ COPY . .
 EXPOSE 8000
 
 # Use Gunicorn as production ASGI server
-CMD ["gunicorn", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "--timeout", "900", "--bind", "0.0.0.0:8000", "vc_matcher_server:app"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:$PORT", "app:app"]
