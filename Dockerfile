@@ -13,5 +13,6 @@ COPY . .
 
 EXPOSE 8000
 
+# changed recently
 # Use Gunicorn as production ASGI server
 CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:$PORT", "app:app"]
