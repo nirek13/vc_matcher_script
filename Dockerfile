@@ -2,17 +2,21 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
+# Install build essentials
 RUN apt-get update && apt-get install -y \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
+# Copy and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copy the rest of the application code
 COPY . .
 
+# Expose the correct port (Render usually passes $PORT automatically)
 EXPOSE 8000
 
-# changed recently
-# Use Gunicorn as production ASGI server
+# Use Gunicorn as a production ASGI server with Uvicorn worker
+# The $PORT environment variable will be set automatically by Render
 CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "-b", "0.0.0.0:$PORT", "app:app"]
